@@ -40,13 +40,13 @@ class Bot:
 
         match accion:
             case 'compra':
-                price: float = mt5.symbol_info_tick(par).ask
                 tipo_orden: None = mt5.ORDER_TYPE_BUY
+                price: float = mt5.symbol_info_tick(par).ask
                 take_profit: float | None = price + Bot.__pares[par][temporalidad]
 
             case 'venta':
-                price: float = mt5.symbol_info_tick(par).bid
                 tipo_orden: None = mt5.ORDER_TYPE_SELL
+                price: float = mt5.symbol_info_tick(par).bid
                 take_profit: float | None = price - Bot.__pares[par][temporalidad]
 
         request: dict[str, float | str | int | None] = {
@@ -67,14 +67,11 @@ class Bot:
         resumen += f'| temporalidad: {temporalidad} | tp: {round(take_profit, 5)} | lot: {lot}'
 
         if result.retcode != mt5.TRADE_RETCODE_DONE:
-            print(f'orden de {accion} {par} fallida, retcode={result.retcode}')
+            resumen: str = f'orden de {accion} {par} {temporalidad} fallida, retcode={result.retcode}'
+            print(resumen)
 
         else:
             print(resumen)
-
-            with open('datos/reporte/reporte.txt', 'a') as archivo:
-                archivo.write(resumen + '\n')
-
             match temporalidad:
                 case '5m':
                     Bot.__lista_5m.append([par, result.order])
@@ -84,6 +81,9 @@ class Bot:
 
                 case '30m':
                     Bot.__lista_30m.append([par, result.order])
+
+        with open('datos/reporte/reporte.txt', 'a') as archivo:
+            archivo.write(resumen + '\n')
 
     @staticmethod
     def __cerrar_posicion(temporalidad: str) -> None:
