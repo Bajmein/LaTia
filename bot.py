@@ -9,11 +9,12 @@ import os
 
 @dataclass
 class Bot:
+    apagar: bool
     __hora_apagado: int
     __minuto_apagado: int
-    __usuario: ClassVar[int | None] = None
-    __passwd: ClassVar[str | None] = None
-    __server: ClassVar[str | None] = None
+    __usuario: ClassVar[int | None] = 10002949113
+    __passwd: ClassVar[str | None] = '+nBe7kMd'
+    __server: ClassVar[str | None] = 'MetaQuotes-Demo'
     __lista_5m: ClassVar[list] = []
     __lista_15m: ClassVar[list] = []
     __lista_30m: ClassVar[list] = []
@@ -199,10 +200,10 @@ if __name__ == '__main__':
 
         else:
             inicio: float = time.time()
-            on: Bot = Bot(13, 00)
+            on: Bot = Bot(False, 22, 39)
             print('Bot iniciado.\n')
             asyncio.run(on.main())
-            apagado_automatico: bool = True
+            apagado_automatico: bool = True if on.apagar else False
             raise KeyboardInterrupt
 
     except KeyboardInterrupt:
