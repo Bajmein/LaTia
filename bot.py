@@ -19,11 +19,11 @@ class Bot:
     __lista_15m: ClassVar[list] = []
     __lista_30m: ClassVar[list] = []
     __pares: ClassVar[dict] = {
-        'EURUSD': {'5m': 0.00015, '15m': 0.00025, '30m': 0.00030},
-        'GBPUSD': {'5m': 0.00015, '15m': 0.00025, '30m': 0.00030},
-        'USDCAD': {'5m': 0.00015, '15m': 0.00025, '30m': 0.00030},
-        'USDCHF': {'5m': 0.00015, '15m': 0.00025, '30m': 0.00030},
-        'USDJPY': {'5m': 0.02000, '15m': 0.03000, '30m': 0.03500},
+        'EURUSD': {'5m': 0.00015, '15m': 0.00015, '30m': 0.00015},
+        'GBPUSD': {'5m': 0.00015, '15m': 0.00015, '30m': 0.00015},
+        'USDCAD': {'5m': 0.00015, '15m': 0.00015, '30m': 0.00015},
+        'USDCHF': {'5m': 0.00015, '15m': 0.00015, '30m': 0.00015},
+        'USDJPY': {'5m': 0.02000, '15m': 0.02000, '30m': 0.02000},
     }
 
     @staticmethod
@@ -176,15 +176,15 @@ class Bot:
             tasks: list = []
 
             if minutos % 5 == 0:
-                Bot.__cerrar_posicion(temporalidad='5m')
+                # Bot.__cerrar_posicion(temporalidad='5m')
+                # Bot.__cerrar_posicion(temporalidad='15m')
+                Bot.__cerrar_posicion(temporalidad='30m')
                 [tasks.append(asyncio.create_task(Bot.__test_5m(par))) for par in list(Bot.__pares.keys())]
 
             if minutos % 15 == 0:
-                Bot.__cerrar_posicion(temporalidad='15m')
                 [tasks.append(asyncio.create_task(Bot.__test_15m(par))) for par in list(Bot.__pares.keys())]
 
             if minutos % 30 == 0:
-                Bot.__cerrar_posicion(temporalidad='30m')
                 [tasks.append(asyncio.create_task(Bot.__test_30m(par))) for par in list(Bot.__pares.keys())]
 
             if hora_local.hour == self.__hora_apagado and hora_local.minute == self.__minuto_apagado:
