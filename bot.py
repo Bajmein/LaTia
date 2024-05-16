@@ -32,7 +32,7 @@ class Bot:
 
     @staticmethod
     def __abrir_posicion(accion: str, par: str, temporalidad: str) -> None:
-        lot: float = 0.75
+        lot: float = 1.0
         deviation: int = 5
         price: float = 0.0
         tipo_orden: any = None
@@ -67,10 +67,14 @@ class Bot:
         resumen += f'| temporalidad: {temporalidad} | tp: {round(take_profit, 5)} | lot: {lot}'
 
         if result.retcode != mt5.TRADE_RETCODE_DONE:
-            print(f'orden de {accion} fallida, retcode={result.retcode}')
+            print(f'orden de {accion} {par} fallida, retcode={result.retcode}')
 
         else:
             print(resumen)
+
+            with open('datos/reporte/reporte.txt', 'w') as archivo:
+                archivo.write(resumen)
+
             match temporalidad:
                 case '5m':
                     Bot.__lista_5m.append([par, result.order])
@@ -158,7 +162,7 @@ class Bot:
         Bot.__buscar_hammer(data=res, par=par, temporalidad='30m')
 
     async def main(self: Self) -> None:
-        self.__login()
+        Bot.__login()
 
         while True:
             hora_local: datetime = datetime.now()
@@ -172,16 +176,16 @@ class Bot:
             tasks: list = []
 
             if minutos % 5 == 0:
-                self.__cerrar_posicion(temporalidad='5m')
-                [tasks.append(asyncio.create_task(self.__test_5m(par))) for par in list(self.__pares.keys())]
+                Bot.__cerrar_posicion(temporalidad='5m')
+                [tasks.append(asyncio.create_task(Bot.__test_5m(par))) for par in list(Bot.__pares.keys())]
 
             if minutos % 15 == 0:
-                self.__cerrar_posicion(temporalidad='15m')
-                [tasks.append(asyncio.create_task(self.__test_15m(par))) for par in list(self.__pares.keys())]
+                Bot.__cerrar_posicion(temporalidad='15m')
+                [tasks.append(asyncio.create_task(Bot.__test_15m(par))) for par in list(Bot.__pares.keys())]
 
             if minutos % 30 == 0:
-                self.__cerrar_posicion(temporalidad='30m')
-                [tasks.append(asyncio.create_task(self.__test_30m(par))) for par in list(self.__pares.keys())]
+                Bot.__cerrar_posicion(temporalidad='30m')
+                [tasks.append(asyncio.create_task(Bot.__test_30m(par))) for par in list(Bot.__pares.keys())]
 
             if hora_local.hour == self.__hora_apagado and hora_local.minute == self.__minuto_apagado:
                 break
