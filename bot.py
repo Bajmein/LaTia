@@ -72,8 +72,8 @@ class Bot:
         else:
             print(resumen)
 
-            with open('datos/reporte/reporte.txt', 'w') as archivo:
-                archivo.write(resumen)
+            with open('datos/reporte/reporte.txt', 'a') as archivo:
+                archivo.write(resumen + '\n')
 
             match temporalidad:
                 case '5m':
